@@ -1,0 +1,15 @@
+FROM python:3.12-alpine
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# برای healthcheck
+RUN apk add --no-cache curl
+
+COPY . .
+ENV UVICORN_HOST=0.0.0.0
+ENV UVICORN_PORT=8000
+EXPOSE 8000
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+

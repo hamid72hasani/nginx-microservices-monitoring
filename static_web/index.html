@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پورتفولیو حمید حسنی</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+    <header class="header">
+        <div class="avatar">
+            <span>HH</span>
+        </div>
+        <div class="header-info">
+            <h1 id="name">...</h1>
+            <p id="title" class="subtitle">...</p>
+            <p id="description" class="description">...</p>
+            <div class="actions">
+                <a id="github" href="#" target="_blank" class="btn primary">گیت‌هاب</a>
+                <a href="#projects-section" class="btn ghost">مشاهده پروژه‌ها</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="section" id="projects-section">
+            <div class="section-header">
+                <h2>پروژه‌ها</h2>
+                <span id="projects-count" class="badge">۰ پروژه</span>
+            </div>
+            <div id="projects-list" class="projects-grid">
+                <div class="card skeleton">
+                    <div class="card-title skeleton-bar"></div>
+                    <div class="card-text skeleton-bar"></div>
+                    <div class="card-text skeleton-bar short"></div>
+                </div>
+                <div class="card skeleton">
+                    <div class="card-title skeleton-bar"></div>
+                    <div class="card-text skeleton-bar"></div>
+                    <div class="card-text skeleton-bar short"></div>
+                </div>
+            </div>
+            <p id="projects-empty" class="empty" style="display:none;">پروژه‌ای ثبت نشده است.</p>
+            <p id="projects-error" class="error" style="display:none;">خطا در دریافت لیست پروژه‌ها.</p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <span>ساخته شده با ❤️ ، Nginx و Docker</span>
+    </footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,39 @@
+groups:
+  - name: nginx-alerts
+    rules:
+      - alert: NginxExporterDown
+        expr: up{job="nginx"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Nginx exporter is down"
+          description: "Nginx exporter has been unreachable for more than 1 minute."
+
+      - alert: NginxDown
+        expr: nginx_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Nginx is down"
+          description: "Nginx is not responding on stub_status endpoint."
+
+      - alert: NginxHigh5xx
+        expr: rate(nginx_http_requests_total{status=~"5.."}[5m]) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High 5xx rate on Nginx"
+          description: "More than 1 HTTP 5xx error per second in the last 5 minutes."
+
+      - alert: NginxHighActiveConnections
+        expr: nginx_connections_active > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High number of active connections on Nginx"
+          description: "Active Nginx connections > 100 for more than 5 minutes."
+
