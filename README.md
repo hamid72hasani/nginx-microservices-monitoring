@@ -1,29 +1,20 @@
-# 🚀 Nginx Full-Stack Application with SSL, Monitoring & Observability
+# 🚀 Nginx Microservices Monitoring
 
-### *(Node.js Backend • Python Backend • PostgreSQL • Nginx Reverse Proxy • Let's Encrypt • Prometheus • Grafana)*
+### *(Node.js Backend • Python FastAPI Backend • PostgreSQL • Nginx Reverse Proxy • Let's Encrypt • Prometheus • Grafana)*
 
-This project is a fully containerized and multi-service production
-environment built with Docker Compose.
-It includes:
+A production-grade **full‑stack microservices platform** built with
+Docker Compose.\
+This project features two independent backends (Node.js + Python), a
+PostgreSQL database, SSL-secured Nginx reverse proxy, and a complete
+observability stack (Prometheus + Grafana).
 
--   A Node.js backend (REST API)\
--   A Python FastAPI backend\
--   PostgreSQL database** with automatic initialization\
--   Nginx reverse proxy** with HTTPS (Let's Encrypt)\
--   Automatic SSL renewal using Certbot\
--   Nginx dynamic reloader (hot-reload on certificate updates)\
--   Nginx Prometheus Exporter (metrics scraping)\
--   Prometheus** (metrics collection and alerting rules)\
--   Grafana** (dashboards and observability UI)\
--   Static frontend hosting via Nginx
-
-This repository demonstrates **production-grade DevOps practices**,
-including reverse proxying, SSL management, service health checks,
-monitoring, and observability.
+It demonstrates real DevOps skills, including service orchestration, SSL
+automation, reverse proxying, monitoring, metrics, alerting, and
+multi-service routing.
 
 ------------------------------------------------------------------------
 
- 🌐 Architecture Overview
+## 🌐 Architecture Overview
 
                           ┌────────────────────────┐
                           │        Clients         │
@@ -35,60 +26,71 @@ monitoring, and observability.
                           │          NGINX            │
                           └───────┬───────────┬───────┘
                                   │           │
-                  Static Website  │           │  /stub_status
-                                  │           │
-                  ┌───────────────▼──┐   ┌───▼─────────────────────┐
-                  │   Node Backend   │   │ Nginx Prometheus Exporter│
-                  └──────────────────┘   └───────┬──────────────────┘
-                                                 │
-                                    ┌────────────▼────────────┐
-                                    │       Prometheus         │
-                                    └────────────┬────────────┘
-                                                 │
-                                       ┌─────────▼────────┐
-                                       │     Grafana       │
-                                       └────────────────────┘
+                        Static Web│           │ 
+                                  │           │ 
+                     ┌────────────▼───┐   ┌──▼────────────────────┐
+                     │ Node.js Backend │   │ Python FastAPI Backend│
+                     │    (Port 3000)  │   │      (Port 8000)      │
+                     └─────────────────┘   └──────────┬────────────┘
+                                                      │
+                                       ┌──────────────▼────────────┐
+                                       │  Nginx Prometheus Exporter │
+                                       └──────────────┬────────────┘
+                                                      │
+                                           ┌──────────▼──────────┐
+                                           │      Prometheus      │
+                                           └──────────┬──────────┘
+                                                      │
+                                            ┌─────────▼────────┐
+                                            │      Grafana      │
+                                            └────────────────────┘
 
 ------------------------------------------------------------------------
 
 ## 📦 Features
 
-### 🔹 Backend Stack
+### 🔹 Backends
 
--   Node.js REST API**
--   Python FastAPI service**
--   Independent Dockerfiles for each service
--   Health checks for all backends
+**Node.js Backend** - Production mode - REST API - PostgreSQL
+connection - `/health` endpoint
+
+**Python FastAPI Backend** - Admin analytics endpoint
+(`/api/admin/stats`) - Async PostgreSQL access (asyncpg) - Prometheus
+metrics (`/metrics`) - Request tracking middleware - `/health` endpoint
+
+------------------------------------------------------------------------
 
 ### 🔹 Database
 
 -   PostgreSQL 16 (Alpine)
--   Schema auto-loading via `init.sql`
+-   Auto initialization via `init.sql`
+-   Shared across microservices
+
+------------------------------------------------------------------------
 
 ### 🔹 Nginx Reverse Proxy
 
+-   HTTPS enabled with Let's Encrypt
+-   Automatic certificate renewal
+-   Redirect HTTP → HTTPS
 -   Serves static frontend
--   Routes requests to both backends
--   Full HTTPS via Let's Encrypt
--   HTTP → HTTPS redirection
--   Exposes `/stub_status` for metrics
--   Cache + log volumes
+-   Reverse proxy for both backends
+-   Exposes `/stub_status` for monitoring
+
+------------------------------------------------------------------------
 
 ### 🔹 Monitoring & Observability
 
--   Prometheus metrics scraping
--   Alert rules for:
-    -   Nginx down
-    -   Exporter down
-    -   5xx spikes
-    -   High active connections
--   Grafana dashboards (import-ready)
-
-### 🔹 SSL Automation
-
--   Initial certificate generation
--   Scheduled renewal loop
--   Automatic Nginx reload on cert updates
+-   **Prometheus**
+    -   Scrapes: Nginx, Python backend
+    -   Custom alert rules for:
+        -   Nginx down
+        -   Exporter down
+        -   High 5xx rate
+        -   Too many connections
+-   **Grafana**
+    -   Import-ready minimal dashboard
+    -   Real-time visualization
 
 ------------------------------------------------------------------------
 
@@ -100,6 +102,7 @@ monitoring, and observability.
     ├── js_backend/
     │   └── Dockerfile
     ├── python_backend/
+    │   ├── app.py
     │   └── Dockerfile
     ├── static_web/
     │   ├── index.html
@@ -122,14 +125,16 @@ monitoring, and observability.
 ### 1. Clone the repository
 
 ``` bash
-git clone <your-repo-url>
+git clone <repo-url>
 cd session-7
 ```
 
-### 2. Create `.env` file
+### 2. Add environment variables
+
+Create `.env`:
 
     DOMAIN=your-domain.com
-    CERTBOT_EMAIL=your@email.com
+    CERTBOT_EMAIL=your-email@example.com
 
 ### 3. Start the stack
 
@@ -141,25 +146,30 @@ docker compose up -d
 
 ## 🔗 URLs
 
-  Service         URL
-  --------------- -------------------------------
-  Web App         https://your-domain.com
-  Prometheus      http://localhost:9090
-  Grafana         http://localhost:3000
-  Nginx Metrics   http://localhost:9113/metrics
+  Service          URL
+  ---------------- -------------------------------
+  Web App          https://your-domain.com
+  Node Backend     http://localhost:3000
+  Python Backend   http://localhost:8000
+  Prometheus       http://localhost:9090
+  Grafana          http://localhost:3000
+  Nginx Metrics    http://localhost:9113/metrics
 
 ------------------------------------------------------------------------
 
-## 📊 Monitoring
+## 📊 Monitoring & Metrics
 
-Prometheus includes alert rules for:
+Python backend metrics:
 
--   Nginx exporter down\
--   Nginx unresponsive\
--   High 5xx error rate\
--   High active connections
+    GET /metrics
+    GET /health
+    GET /api/admin/stats
 
-Alerts are defined in:
+Nginx exporter metrics:
+
+    GET http://localhost:9113/metrics
+
+Prometheus alert rules:
 
     monitoring/rules.yml
 
@@ -167,13 +177,11 @@ Alerts are defined in:
 
 ## 🧪 Load Testing
 
-Generate traffic:
-
 ``` bash
 for i in {1..200}; do curl -s https://your-domain.com >/dev/null; done
 ```
 
-Or using `ab`:
+Or with ApacheBench:
 
 ``` bash
 ab -n 2000 -c 50 https://your-domain.com/
@@ -183,26 +191,26 @@ ab -n 2000 -c 50 https://your-domain.com/
 
 ## 🛠 Tech Stack
 
--   Nginx\
--   Docker Compose\
--   Node.js\
--   Python FastAPI\
--   PostgreSQL\
--   Prometheus\
--   Grafana\
--   Certbot SSL
+-   Nginx
+-   Node.js
+-   Python FastAPI
+-   PostgreSQL
+-   Docker Compose
+-   Prometheus
+-   Grafana
+-   Certbot (Let's Encrypt)
 
 ------------------------------------------------------------------------
 
 ## 🧹 Cleanup
 
-Stop containers:
+Stop everything:
 
 ``` bash
 docker compose down
 ```
 
-Remove persistent data (dangerous):
+Remove volumes (⚠ irreversible):
 
 ``` bash
 docker volume rm pgdata letsencrypt certbot-webroot nginx-cache nginx-logs
@@ -210,10 +218,9 @@ docker volume rm pgdata letsencrypt certbot-webroot nginx-cache nginx-logs
 
 ------------------------------------------------------------------------
 
-## ⭐ Contribution
+## ⭐ Contributions
 
-Pull requests are welcome. If you like this project, consider giving it
-a ⭐ on GitHub.
+PRs welcome. If you like this project, leave a ⭐ on GitHub!
 
 ------------------------------------------------------------------------
 
